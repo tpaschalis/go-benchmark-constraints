@@ -25,6 +25,46 @@ func NewBR() *BenchmarkRunner {
 	return &BenchmarkRunner{[]constraint{}}
 }
 
+func NewConstraint(bf func(b *testing.B)) *constraint {
+	return &constraint{benchfunc: bf}
+}
+
+func (br *BenchmarkRunner) AddConstraint(c *constraint) *BenchmarkRunner {
+	cs := br.c
+	cs = append(cs, *c)
+	return &BenchmarkRunner{cs}
+}
+
+func (c *constraint) WithMaxAllocs(i int64) *constraint {
+	c.maxAllocsPerOp = &i
+	return c
+}
+
+func (c *constraint) WithMaxAllocatedBytes(i int64) *constraint {
+	c.maxAllocedBytesPerOp = &i
+	return c
+}
+
+func (c *constraint) WithMaxNsPerOp(i int64) *constraint {
+	c.maxNsPerOp = &i
+	return c
+}
+
+func (c *constraint) WithMaxMBPerSec(f float64) *constraint {
+	c.maxMBPerSec = &f
+	return c
+}
+
+func (c *constraint) WithMinMBPerSec(f float64) *constraint {
+	c.minMBPerSec = &f
+	return c
+}
+
+func (c *constraint) WithVerbose(f float64) *constraint {
+	c.verbose = true
+	return c
+}
+
 type optionFunc func(*constraint)
 
 func WithMaxAllocs(i int64) optionFunc {
